@@ -54,4 +54,4 @@ function norexSearch(input, expression, ...args) {
   return matches;
 }
 
-module.exports = { norexToRegex, buildRegexFromNorex, norexSearch };
+export default { norexToRegex, buildRegexFromNorex, norexSearch };
