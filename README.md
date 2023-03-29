@@ -8,10 +8,11 @@
 - [Features](#features)
 - [Usage](#usage)
   - [The Norex package provides two main functions for converting between Norex and regex expressions:](#the-norex-package-provides-two-main-functions-for-converting-between-norex-and-regex-expressions)
-  - [`norexToRegex()`](#norextoregex)
-    - [Converts a Norex expression to a regex pattern.](#converts-a-norex-expression-to-a-regex-pattern)
-  - [`regexToNorex()`](#regextonorex)
-    - [Converts a regex pattern to a Norex expression.](#converts-a-regex-pattern-to-a-norex-expression)
+  - [NorEx-to-RegEx](#norex-to-regex)
+    - [`norexToRegex()` Converts a Norex expression to a regex pattern.](#norextoregex-converts-a-norex-expression-to-a-regex-pattern)
+  - [RegEx-to-NorEx](#regex-to-norex)
+    - [`regexToNorex()` Converts a regex pattern to a Norex expression.](#regextonorex-converts-a-regex-pattern-to-a-norex-expression)
+  - [These functions can be used to seamlessly integrate Norex into your existing codebase and simplify the process of working with regular expressions.](#these-functions-can-be-used-to-seamlessly-integrate-norex-into-your-existing-codebase-and-simplify-the-process-of-working-with-regular-expressions)
     - [`Available Expressions`](#available-expressions)
 - [Examples](#examples)
 - [Table of Expressions](#table-of-expressions)
@@ -40,11 +41,12 @@ npm install norex
 # Usage
 ## The Norex package provides two main functions for converting between Norex and regex expressions:
 
-## `norexToRegex()`
-### Converts a Norex expression to a regex pattern.
-## `regexToNorex()`
-### Converts a regex pattern to a Norex expression.
-These functions can be used to seamlessly integrate Norex into your existing codebase and simplify the process of working with regular expressions.
+## NorEx-to-RegEx
+### `norexToRegex()` Converts a Norex expression to a regex pattern.
+## RegEx-to-NorEx
+### `regexToNorex()` Converts a regex pattern to a Norex expression.
+
+## These functions can be used to seamlessly integrate Norex into your existing codebase and simplify the process of working with regular expressions.
 
 ### `Available Expressions`
 For a complete list of available Norex expressions and their corresponding regex patterns, please refer to the Norex Expressions Table.
@@ -55,9 +57,25 @@ Search for `http://` or `https://`:
 ```
 # Norex
 
-starts-with "http"
-optional "s"
-"://"
+// Syntax #1
+
+line-start:
+  "http"
+  optional "s"
+  "://"
+
+
+// Syntax #2
+
+line-start:
+  "http"
+  optional("s")
+  "://"
+
+
+// Syntax #3
+
+line-start("http" optional("s") "://")
 ```
 ```
 # Regex
@@ -69,9 +87,24 @@ Search for `hello world`:
 ```
 # Norex
 
+// Syntax #1
+
 "hello"
-any (whitespace) (non-whitespace)
+any:
+  whitespace
+  non-whitespace
 "world"
+
+
+// Syntax #2
+
+"hello"
+any whitespace non-whitespace
+"world"
+
+
+// Syntax #3
+"hello" any(whitespace non-whitespace) "world"
 ```
 ```
 # Regex

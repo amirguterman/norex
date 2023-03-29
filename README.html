@@ -736,14 +736,18 @@ hue-6-2: #e6c07b
 <li><a href="#usage">Usage</a>
 <ul>
 <li><a href="#the-norex-package-provides-two-main-functions-for-converting-between-norex-and-regex-expressions">The Norex package provides two main functions for converting between Norex and regex expressions:</a></li>
-<li><a href="#norextoregex"><code>norexToRegex()</code></a>
+<li><a href="#norex-to-regex">NorEx-to-RegEx</a>
 <ul>
-<li><a href="#converts-a-norex-expression-to-a-regex-pattern">Converts a Norex expression to a regex pattern.</a></li>
+<li><a href="#norextoregex-converts-a-norex-expression-to-a-regex-pattern"><code>norexToRegex()</code> Converts a Norex expression to a regex pattern.</a></li>
 </ul>
 </li>
-<li><a href="#regextonorex"><code>regexToNorex()</code></a>
+<li><a href="#regex-to-norex">RegEx-to-NorEx</a>
 <ul>
-<li><a href="#converts-a-regex-pattern-to-a-norex-expression">Converts a regex pattern to a Norex expression.</a></li>
+<li><a href="#regextonorex-converts-a-regex-pattern-to-a-norex-expression"><code>regexToNorex()</code> Converts a regex pattern to a Norex expression.</a></li>
+</ul>
+</li>
+<li><a href="#these-functions-can-be-used-to-seamlessly-integrate-norex-into-your-existing-codebase-and-simplify-the-process-of-working-with-regular-expressions">These functions can be used to seamlessly integrate Norex into your existing codebase and simplify the process of working with regular expressions.</a>
+<ul>
 <li><a href="#available-expressions"><code>Available Expressions</code></a></li>
 </ul>
 </li>
@@ -786,20 +790,36 @@ hue-6-2: #e6c07b
 </ul>
 <h1 id="usage">Usage</h1>
 <h2 id="the-norex-package-provides-two-main-functions-for-converting-between-norex-and-regex-expressions">The Norex package provides two main functions for converting between Norex and regex expressions:</h2>
-<h2 id="norextoregex"><code>norexToRegex()</code></h2>
-<h3 id="converts-a-norex-expression-to-a-regex-pattern">Converts a Norex expression to a regex pattern.</h3>
-<h2 id="regextonorex"><code>regexToNorex()</code></h2>
-<h3 id="converts-a-regex-pattern-to-a-norex-expression">Converts a regex pattern to a Norex expression.</h3>
-<p>These functions can be used to seamlessly integrate Norex into your existing codebase and simplify the process of working with regular expressions.</p>
+<h2 id="norex-to-regex">NorEx-to-RegEx</h2>
+<h3 id="norextoregex-converts-a-norex-expression-to-a-regex-pattern"><code>norexToRegex()</code> Converts a Norex expression to a regex pattern.</h3>
+<h2 id="regex-to-norex">RegEx-to-NorEx</h2>
+<h3 id="regextonorex-converts-a-regex-pattern-to-a-norex-expression"><code>regexToNorex()</code> Converts a regex pattern to a Norex expression.</h3>
+<h2 id="these-functions-can-be-used-to-seamlessly-integrate-norex-into-your-existing-codebase-and-simplify-the-process-of-working-with-regular-expressions">These functions can be used to seamlessly integrate Norex into your existing codebase and simplify the process of working with regular expressions.</h2>
 <h3 id="available-expressions"><code>Available Expressions</code></h3>
 <p>For a complete list of available Norex expressions and their corresponding regex patterns, please refer to the Norex Expressions Table.</p>
 <h1 id="examples">Examples</h1>
 <p>Search for <code>http://</code> or <code>https://</code>:</p>
 <pre><code># Norex
 
-starts-with &quot;http&quot;
-optional &quot;s&quot;
-&quot;://&quot;
+// Syntax #1
+
+line-start:
+  &quot;http&quot;
+  optional &quot;s&quot;
+  &quot;://&quot;
+
+
+// Syntax #2
+
+line-start:
+  &quot;http&quot;
+  optional(&quot;s&quot;)
+  &quot;://&quot;
+
+
+// Syntax #3
+
+line-start(&quot;http&quot; optional(&quot;s&quot;) &quot;://&quot;)
 </code></pre>
 <pre><code># Regex
 
@@ -808,9 +828,24 @@ optional &quot;s&quot;
 <p>Search for <code>hello world</code>:</p>
 <pre><code># Norex
 
+// Syntax #1
+
 &quot;hello&quot;
-any (whitespace) (non-whitespace)
+any:
+  whitespace
+  non-whitespace
 &quot;world&quot;
+
+
+// Syntax #2
+
+&quot;hello&quot;
+any whitespace non-whitespace
+&quot;world&quot;
+
+
+// Syntax #3
+&quot;hello&quot; any(whitespace non-whitespace) &quot;world&quot;
 </code></pre>
 <pre><code># Regex
 
