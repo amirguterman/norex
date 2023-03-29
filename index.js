@@ -1,77 +1,57 @@
-const norexToRegex = function (norex) {
-  const norexToRegexMap = {
-    "(char)": ".",
-    "starts-with(expr)": "^expr",
-    "ends-with(expr)": "expr$",
-    "is-within(expr)": "^expr$",
-    "optional(expr)": "expr*",
-    "at-least-once(expr)": "expr+",
-    "once-at-most(expr)": "expr?",
-    "with(chars)": "[chars]",
-    "without(chars)": "[^chars]",
-    "either-or(expr, alt)": "expr|alt",
-    "group(expr)": "(expr)",
-    "escape-symbol": "\\\\",
-    "(digit)": "\\d",
-    "(non-digit)": "\\D",
-    "(word-char)": "\\w",
-    "(non-word-char)": "\\W",
-    "(whitespace)": "\\s",
-    "(non-whitespace)": "\\S",
-    "word(expr)": "\\bexpr",
-    "non-word(expr)": "\\Bexpr",
-    "non-capture-group(expr)": "(?:expr)"
-  };
+const norexToRegexMap = {
+  "(char)": () => ".",
+  "starts-with": (expr) => `^${expr}`,
+  "ends-with": (expr) => `${expr}$`,
+  "is-within": (expr) => `^${expr}$`,
+  "optional": (expr) => `${expr}*`,
+  "at-least-once": (expr) => `${expr}+`,
+  "once-at-most": (expr) => `${expr}?`,
+  "repeat-n-times": (expr, n) => `${expr}{${n}}`,
+  "repeat-n-or-more": (expr, n) => `${expr}{${n},}`,
+  "repeat-n-to-m": (expr, n, m) => `${expr}{${n},${m}}`,
+  "with": (chars) => `[${chars}]`,
+  "without": (chars) => `[^${chars}]`,
+  "either-or": (expr, alt) => `${expr}|${alt}`,
+  "group": (expr) => `\\(${expr}\\)`,
+  "escape-symbol": () => "\\\\",
+  "(digit)": () => "\\d",
+  "(non-digit)": () => "\\D",
+  "(word-char)": () => "\\w",
+  "(non-word-char)": () => "\\W",
+  "(whitespace)": () => "\\s",
+  "(non-whitespace)": () => "\\S",
+  "word": (expr) => `\\b${expr}`,
+  "non-word": (expr) => `\\B${expr}`,
+  "will-occur": (expr) => `(?=${expr})`,
+  "will-not-occur": (expr) => `(?!${expr})`,
+  "has-occurred": (expr) => `(?<=${expr})`,
+  "has-not-occurred": (expr) => `(?<!${expr})`,
+  "non-capture-group": (expr) => `(?:${expr})`,
+  "all-of": (exprs) => exprs.map(expr => `(?=${expr})`).join(''),
+  "one-of": (exprs) => exprs.join('|'),
+  "some-of": (exprs) => `(${exprs.map(expr => `(?=${expr})`).join('|')})`,
+}
 
-  let regex = norex;
+function norexToRegex(expression, ...args) {
+  const regexBuilder = norexToRegexMap[expression];
 
-  for (const [key, value] of Object.entries(norexToRegexMap)) {
-    regex = regex.replace(new RegExp(key, 'g'), value);
+  if (!regexBuilder) {
+      throw new Error(`Unknown Norex expression: ${expression}`);
   }
 
-  // Custom handling for the new Norex expressions and decoupled expressions
-  regex = regex.replace(/all-of\((.*?)\)/g, (_, expr) => {
-    const parts = expr.split(',').map(s => s.trim());
-    return parts.map(p => `(?=${p})`).join('');
-  });
-
-  regex = regex.replace(/one-of\((.*?)\)/g, (_, expr) => {
-    const parts = expr.split(',').map(s => s.trim());
-    return parts.join('|');
-  });
-
-  regex = regex.replace(/some-of\((.*?)\)/g, (_, expr) => {
-    const parts = expr.split(',').map(s => s.trim());
-    return parts.map(p => `(?=${p})`).join('|');
-  });
-
-  regex = regex.replace(/none-of\((.*?)\)/g, (_, expr) => {
-    const parts = expr.split(',').map(s => s.trim());
-    return `(?!(?:${parts.map(p => `(?=${p})`).join('|')}))`;
-  });
-
-  regex = regex.replace(/all-of-by-this-order\((.*?)\)/g, (_, expr) => {
-    const parts = expr.split(',').map(s => s.trim());
-    return parts.map(p => `${p}(?=.*`).join('') + parts.slice(1).join(')(?=.*') + ')';
-  });
-
-  regex = regex.replace(/will-occur\((.*?)\)/g, (_, expr) => {
-    return `(?=${expr})`;
-  });
-
-  regex = regex.replace(/will-not-occur\((.*?)\)/g, (_, expr) => {
-    return `(?!${expr})`;
-  });
-
-  regex = regex.replace(/has-occurred\((.*?)\)/g, (_, expr) => {
-    return `(?<=${expr})`;
-  });
-
-  regex = regex.replace(/has-not-occurred\((.*?)\)/g, (_, expr) => {
-    return `(?<!${expr})`;
-  });
+  return regexBuilder(...args);
 }
 
-export default {
-  norexToRegex
+function buildRegexFromNorex(expression, ...args) {
+  const regexString = norexToRegex(expression, ...args);
+  return regexString;
 }
+
+function norexSearch(input, expression, ...args) {
+  const regexString = buildRegexFromNorex(expression, ...args);
+  const regex = new RegExp(regexString, 'g');
+  const matches = input.match(regex);
+  return matches;
+}
+
+module.exports = { norexToRegex, buildRegexFromNorex, norexSearch };
