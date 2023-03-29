@@ -1,0 +1,17 @@
+{
+  "name": "norex",
+  "version": "1.0.0",
+  "description": "A package to convert Norex expressions to Regex and vice versa.",
+  "main": "index.js",
+  "author": {
+    "name": "Amir Guterman",
+    "email": "amirguterman@gmail.com",
+    "url": "https://github.com/amirguterman"
+  },
+  "maintainers": [{{
+    "name": "Amir Guterman",
+    "email": "amirguterman@gmail.com",
+    "url": "https://github.com/amirguterman"
+  }],
+  "repository": {"type": "javascript"}
+}
